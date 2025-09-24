@@ -1,0 +1,122 @@
+@baseUrl = http://localhost:3000
+@token = 
+
+### ========================
+### USUÁRIOS
+### ========================
+
+### Criar usuário
+POST {{baseUrl}}/user/create
+Content-Type: application/json
+
+{
+  "name": "Pavlov",
+  "email": "pavlov@teste.com",
+  "password": "12345678"
+}
+
+### Listar usuários (precisa TOKEN se for admin)
+GET {{baseUrl}}/user/list
+Authorization: Bearer {{token}}
+
+
+### ========================
+### AUTENTICAÇÃO
+### ========================
+
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "claymor@teste.com",
+  "password": "12345678"
+}
+
+###
+> {% client.global.set("token", response.body.token); %}
+
+
+
+### ========================
+### LICENÇAS (precisam de TOKEN)
+### ========================
+
+
+### Criar licença
+POST {{baseUrl}}/license/create
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YzVmNmZhYTk5MjZhNWQ1ZjUzM2Y4ZiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODcxODY1NSwiZXhwIjoxNzU5MzIzNDU1fQ.DEURhHu74N1Md8RasII_F02RQJ5mELQJZZuv7yZQlkM
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="company"
+
+Empresa Pavlov
+--WebAppBoundary
+Content-Disposition: form-data; name="type"
+
+Origem
+--WebAppBoundary
+Content-Disposition: form-data; name="location"
+
+Viana
+--WebAppBoundary
+Content-Disposition: form-data; name="validUntil"
+
+2025-12-31
+--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="Meloy.pdf"
+Content-Type: application/pdf
+
+< ./Meloy.pdf
+--WebAppBoundary--
+### Listar todas licenças
+GET {{baseUrl}}/license/list
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2MxNmU2OWY1NjUyYjlmYzkyZjNjZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODIwNTY3MCwiZXhwIjoxNzU4ODEwNDcwfQ.KRlQolocMaiUzM_DG_D4zzZzhgtvaWn-edtZnFBSxrw
+
+
+
+### Buscar licença por ID
+GET {{baseUrl}}/license/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2MxNmU2OWY1NjUyYjlmYzkyZjNjZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODIwNTY3MCwiZXhwIjoxNzU4ODEwNDcwfQ.KRlQolocMaiUzM_DG_D4zzZzhgtvaWn-edtZnFBSxrw
+
+### Atualizar licença
+PUT {{baseUrl}}/license/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "state": "inactive"
+}
+
+### Deletar licença
+DELETE {{baseUrl}}/license/{{id}}
+Authorization: Bearer {{token}}
+
+
+### ========================
+### VALIDAÇÃO (pública, sem TOKEN)
+### ========================
+
+### Validar licença publicamente
+GET {{baseUrl}}/license/validate/LIC-1758124770228
+
+
+### Testar Qr Base64
+GET {{baseUrl}}/test/qr-base64?text=L-2500006110
+
+### Testar Qr Base64
+GET {{baseUrl}}/test/qr-file?text=L-2500006110
+
+### Testar Qr text
+GET {{baseUrl}}/test/qr-text?text=L-2500006110
+
+###Testes
+GET {{baseUrl}}/license/dowload/68c9e64116e12e56d8096337
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2MxNmU2OWY1NjUyYjlmYzkyZjNjZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODIwNTY3MCwiZXhwIjoxNzU4ODEwNDcwfQ.KRlQolocMaiUzM_DG_D4zzZzhgtvaWn-edtZnFBSxrw
+###
+### ========================
+### ESTATÍSTICAS (admin)
+### ========================
+
+GET {{baseUrl}}/license/stats
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2MxNmU2OWY1NjUyYjlmYzkyZjNjZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODIwNTY3MCwiZXhwIjoxNzU4ODEwNDcwfQ.KRlQolocMaiUzM_DG_D4zzZzhgtvaWn-edtZnFBSxrw
