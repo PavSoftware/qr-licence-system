@@ -71,7 +71,7 @@ Content-Type: application/pdf
 --WebAppBoundary--
 ### Listar todas licenças
 GET {{baseUrl}}/license/list
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2MxNmU2OWY1NjUyYjlmYzkyZjNjZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODIwNTY3MCwiZXhwIjoxNzU4ODEwNDcwfQ.KRlQolocMaiUzM_DG_D4zzZzhgtvaWn-edtZnFBSxrw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YzVmNmZhYTk5MjZhNWQ1ZjUzM2Y4ZiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODk2Nzc5MCwiZXhwIjoxNzU5NTcyNTkwfQ.N-gAR6g_GBEXS6hn1_ooXZFWtVjAUZ_Uk5CvOlW4ylA
 
 
 

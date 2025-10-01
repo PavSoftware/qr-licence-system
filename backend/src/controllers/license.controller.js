@@ -15,7 +15,7 @@ const create = async(req,res)=>{
         const filePath = file ? `uploads/licenses/${file.filename}` : null
         const originalName = file ? file.originalname : null
 
-        //se qrConfig vier como string, parseamos
+        //verficar se qrcode vir como string caso sim parseamso
         let body = { ...req.body }
         
         if (body.qrConfig) {
