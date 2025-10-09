@@ -54,12 +54,12 @@ function Validate() {
       )
     }
 
-    const license = result.data
+    const license = result?.data
     const now = new Date()
 
     return (
-      <div className="min-h-screen bg-white p-6">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-6 p-6 items-start">
+      <div className="w-[100%] min-h-screen bg-white p-6">
+        <div className="w-[100%] max-w-2xl mx-auto flex flex-col md:flex-row gap-6 p-6 items-start">
           {/* Left */}
           <div className="flex flex-col items-center">
             <div className="flex flex-col items-center gap-4 text-center">
@@ -76,6 +76,7 @@ function Validate() {
             </div>
 
             <div className="text-xl font-bold text-gray-500 text-shadow-black mt-6 mb-4 text-center">Codigo da licenca: {license.code}</div>
+            
 
             <div className="flex flex-col gap-8 mt-4">
               <div className="flex gap-2">

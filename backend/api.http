@@ -10,14 +10,30 @@ POST {{baseUrl}}/user/create
 Content-Type: application/json
 
 {
-  "name": "Pavlov",
-  "email": "pavlov@teste.com",
+  "name": "Ronaldo Teste",
+  "email": "ronaldo@teste.com",
   "password": "12345678"
 }
 
+
+### Actualizar
+PATCH  {{baseUrl}}/user/update/68de9c8b38d410e0b25a2709
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc1OTkyMTk2NywiZXhwIjoxNzYwNTI2NzY3fQ.ebPD_4AcPDlZDW7yRQdEJx9f0-WXyMENJZ5Ib5iqZ7g
+Content-Type: application/json
+
+{
+  "name": "Ronaldo Bernardo",
+  "email": "ronaldo@gmail.com",
+  "password": "12345678"
+}
+
+
+
+
+
 ### Listar usuários (precisa TOKEN se for admin)
 GET {{baseUrl}}/user/list
-Authorization: Bearer {{token}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc1OTkyMTk2NywiZXhwIjoxNzYwNTI2NzY3fQ.ebPD_4AcPDlZDW7yRQdEJx9f0-WXyMENJZ5Ib5iqZ7g
 
 
 ### ========================
@@ -28,7 +44,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "claymor@teste.com",
+ "email": "ronaldo@teste.com",
   "password": "12345678"
 }
 
@@ -44,7 +60,7 @@ Content-Type: application/json
 
 ### Criar licença
 POST {{baseUrl}}/license/create
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YzVmNmZhYTk5MjZhNWQ1ZjUzM2Y4ZiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODcxODY1NSwiZXhwIjoxNzU5MzIzNDU1fQ.DEURhHu74N1Md8RasII_F02RQJ5mELQJZZuv7yZQlkM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZTAxMDgxNjkzZmFlYWNiMzQxODM5MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1OTUxNTgxOCwiZXhwIjoxNzYwMTIwNjE4fQ.h0DsghVDEHMWdNWPG2NbhGFxB49nkfaDodMy1x9RUF4
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -64,14 +80,14 @@ Content-Disposition: form-data; name="validUntil"
 
 2025-12-31
 --WebAppBoundary
-Content-Disposition: form-data; name="document"; filename="Meloy.pdf"
+Content-Disposition: form-data; name="document"; filename="exemplar.pdf"
 Content-Type: application/pdf
 
-< ./Meloy.pdf
+< ./exemplar.pdf
 --WebAppBoundary--
 ### Listar todas licenças
 GET {{baseUrl}}/license/list
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YzVmNmZhYTk5MjZhNWQ1ZjUzM2Y4ZiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODk2Nzc5MCwiZXhwIjoxNzU5NTcyNTkwfQ.N-gAR6g_GBEXS6hn1_ooXZFWtVjAUZ_Uk5CvOlW4ylA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5ZjMzNzc1NDZkNmRkYzI5MTY3MCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1OTUxNDUyNywiZXhwIjoxNzYwMTE5MzI3fQ.SCJ17Ee_3teOU4CEC6Vg5ZCU9YwT9e-qbu12LM-C-D4
 
 
 

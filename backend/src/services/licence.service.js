@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { inserQrIntoPdf } from '../utils/pdf.utils.js'
 import fs from "fs"
+import { log } from "console";
 
 
 //criar uma licenca nova
@@ -18,7 +19,7 @@ const createLicense = async (data, filePath, userId, originalName) => {
 
   if (existingLicense) throw new Error('Ja existe uma licenca activa para este documento')
 
-  const licenseCode = "LIC-" + Date.now()
+  const licenseCode = "L-" + Date.now()
   const validationURL = `${process.env.Base_URL}/license/validate/${licenseCode}`
 
   // 🔹 Gera QR em base64
@@ -54,8 +55,8 @@ const findLicenseById = async (id) => {
 
 
 //buscar all licencas (escalavel para caso se precise fazer buscas com filtros)
-const findAllLicenses = async (filter = {} ) => {
-    return await licence.find(filter)
+const findAllLicenses = async (filter) => {
+    return await licence.find(filter).populate('createdBy', 'name email').sort({ createdAt: -1 })
 } 
 
 
@@ -83,8 +84,10 @@ const validateLicense = async (code) => {
 
     if (!license) return  { valid: false, message: 'Licenca nao encontrada'}
 
-    if (license.state !== 'active') 
-        return {valid: false, message: 'licenca nao activa'}
+    if (license.state !== 'active') {
+         return  {valid: false, message: 'licenca nao activa'}
+    }
+       
     if (license.validUntil < new Date()) return { valid: false, message: 'Licenca expirada'}
 
     return {valid: true, data: license}

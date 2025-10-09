@@ -50,7 +50,14 @@ const create = async(req,res)=>{
 //listar todas as licencas
 const list = async (req,res)=> {
     try {
-        const licenses = await licenseService.findAllLicenses()
+        let query = {}
+
+        //filtros{}
+       if(req.user.role !== 'super-admin'){
+            query.createdBy = req.user._id
+       }
+
+        const licenses = await licenseService.findAllLicenses(query)
         res.status(200).send(licenses)
     } catch (error) {
         res.status(500).send({ message: 'erro ao listar  licencas', error: error.message })

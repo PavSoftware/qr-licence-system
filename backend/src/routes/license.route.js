@@ -16,7 +16,7 @@ router.get("/stats",authMiddleware,licenseController.stats)
 router.get('/validate/:code', licenseController.validate)
 
 //listar todas licencas mas claro pode ser so admin tambem dependo da escalabilidade do dev
-router.get('/list',authMiddleware, adminMiddleware, licenseController.list)
+router.get('/list',authMiddleware, licenseController.list)
 
 //buscar licenca por id admin
 router.get('/:id',authMiddleware,adminMiddleware, licenseController.getById)

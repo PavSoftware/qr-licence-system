@@ -25,9 +25,6 @@ export const authMiddleware = async (req,res,next) => {
 
 //Middleware para admins
 export const adminMiddleware = (req,res,next) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).send({ message: 'Acesso negado: apenas admin' })
-    }
-
-    next()
+     if (["admin", "super-admin"].includes(req.user.role)) return next();
+        return res.status(403).json({ message: "Acesso negado" });
 }

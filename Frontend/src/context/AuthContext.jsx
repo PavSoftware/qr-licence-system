@@ -2,26 +2,35 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Criação do contexto
 const AuthContext = createContext();
 
-// Hook para consumir o contexto
-const useAuth =  () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Carregar usuário do localStorage se houver token
+  // Restaura token e usuário do localStorage ao iniciar
   useEffect(() => {
-    if (token && !user) {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) setUser(JSON.parse(storedUser));
-    }
-  }, [token, user]);
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
-  // Função de login
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+
+    // Evita renderizar rotas antes de terminar o carregamento
+    setTimeout(() => setLoading(false), 2000);
+  }, []);
+
+const updateUser = (updatedUser) => {
+  setUser(updatedUser);
+  localStorage.setItem("user", JSON.stringify(updatedUser));
+};
+
   const login = async (email, password) => {
     try {
       const res = await fetch("http://localhost:3000/auth/login", {
@@ -31,7 +40,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
-      console.log("Resposta do backend:", data); 
 
       if (!res.ok) throw new Error(data.message || "Erro no login");
 
@@ -44,14 +52,17 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", t);
       localStorage.setItem("user", JSON.stringify(u));
 
-      navigate("/dashboard");
+      if (u.role === "super-admin") {
+        navigate("/super-admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error("Erro no login:", err.message);
       alert("Falha no login: " + err.message);
     }
   };
 
-  // Função de logout
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -60,13 +71,23 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
+  if (loading) {
+    //spinner bonito com Tailwind
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#0f111a] text-white">
+        <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-300 text-sm">Carregando sessão...</p>
+      </div>
+    );
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
-export {
-  useAuth,
-  AuthContext
-}
+
+// src/context/AuthContext.jsx
+
+

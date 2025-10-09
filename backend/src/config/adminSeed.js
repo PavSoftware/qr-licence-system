@@ -9,7 +9,7 @@ const seedAdmin = async () => {
                 name: 'Super Admin',
                 email: 'admin@gmail.com',
                 password: '11235813',
-                role: 'admin'
+                role: 'super-admin'
             })
 
             await admin.save()

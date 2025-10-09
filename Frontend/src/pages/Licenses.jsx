@@ -8,7 +8,7 @@ function Licenses() {
   const [licenses, setLicenses] = useState([]);
   const [stats, setStats] = useState(null);
 
-  // Criar nova licença
+  // Estados do formulário
   const [showForm, setShowForm] = useState(false);
   const [company, setCompany] = useState("");
   const [type, setType] = useState("");
@@ -20,27 +20,26 @@ function Licenses() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Função para buscar licenças
+  // Novo estado de loading (exibe spinner)
+  const [loading, setLoading] = useState(true);
+
+  // Buscar licenças
   const fetchLicenses = async () => {
     try {
       const res = await fetch("http://localhost:3000/license/list", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-
-      // Ordena pela data de criação (mais recente primeiro)
       const sorted = [...data].sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
-
       setLicenses(sorted);
     } catch (err) {
-      console.error("Error fetching licenses:", err);
+      console.error("Erro ao buscar licenças:", err);
     }
   };
 
-
-  // Função para buscar estatísticas
+  // Buscar estatísticas
   const fetchStats = async () => {
     try {
       const res = await fetch("http://localhost:3000/license/stats", {
@@ -49,24 +48,37 @@ function Licenses() {
       const data = await res.json();
       setStats(data);
     } catch (err) {
-      console.error("Error fetching stats:", err);
+      console.error("Erro ao buscar estatísticas:", err);
     }
   };
 
-  // Buscar lista de licenças e stats quando o token mudar
+  // Buscar tudo quando o token mudar
   useEffect(() => {
     if (!token) return;
-    fetchLicenses();
-    fetchStats();
+
+    const loadData = async () => {
+      await Promise.all([fetchLicenses(), fetchStats()]);
+      // dá um pequeno delay pra deixar o spinner mais suave
+      setTimeout(() => setLoading(false), 2000);
+    };
+
+    loadData();
   }, [token]);
+
+  // Spinner enquanto carrega
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#0f111a] text-white">
+        <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-300 text-sm">Carregando licenças...</p>
+      </div>
+    );
+  }
 
   // Submeter nova licença
   const handleCreateLicense = async (e) => {
     e.preventDefault();
-    if (!file) {
-      alert("Selecione um arquivo PDF!");
-      return;
-    }
+    if (!file) return alert("Selecione um arquivo PDF!");
 
     try {
       const formData = new FormData();
@@ -78,18 +90,15 @@ function Licenses() {
 
       const res = await fetch("http://localhost:3000/license/create", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
       const contentType = res.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
+      if (contentType?.includes("application/json")) {
         await res.json();
       } else {
-        const text = await res.text();
-        throw new Error(`Resposta inesperada do servidor: ${text}`);
+        throw new Error(await res.text());
       }
 
       alert("Licença criada com sucesso!");
@@ -99,8 +108,6 @@ function Licenses() {
       setLocation("");
       setValidUntil("");
       setFile(null);
-
-      // Atualiza direto do banco
       fetchLicenses();
       fetchStats();
     } catch (err) {
@@ -116,7 +123,7 @@ function Licenses() {
       (l.company || "").toLowerCase().includes(search.toLowerCase().trim())
   );
 
-  // Paginação - slice
+  // Paginação
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginated = filtered.slice(startIndex, startIndex + itemsPerPage);
@@ -133,9 +140,9 @@ function Licenses() {
 
   return (
     <div>
+      {/* Cabeçalho */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Licenças</h1>
-
         <button
           onClick={() => setShowForm(!showForm)}
           className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white"
@@ -144,7 +151,7 @@ function Licenses() {
         </button>
       </div>
 
-      {/* Formulário de criação */}
+      {/* Formulário */}
       {showForm && (
         <form
           onSubmit={handleCreateLicense}
@@ -184,9 +191,7 @@ function Licenses() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-300 mb-1">
-              Validade até
-            </label>
+            <label className="block text-sm text-gray-300 mb-1">Validade até</label>
             <input
               type="date"
               value={validUntil}
@@ -197,9 +202,7 @@ function Licenses() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-300 mb-1">
-              Upload do PDF
-            </label>
+            <label className="block text-sm text-gray-300 mb-1">Upload do PDF</label>
             <input
               type="file"
               accept="application/pdf"
@@ -218,7 +221,7 @@ function Licenses() {
         </form>
       )}
 
-      {/* Barra de pesquisa */}
+      {/* Pesquisa */}
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
@@ -245,42 +248,42 @@ function Licenses() {
             </tr>
           </thead>
           <tbody>
-            {paginated.map((l, i) => (
-              <tr key={i} className="border-b border-gray-700">
-                <td className="px-6 py-4">{l.code}</td>
-                <td className="px-6 py-4">{l.company}</td>
-                <td className="px-6 py-4">{formatDate(l.validUntil)}</td>
-                <td className="px-6 py-4">
-                  {l.state === "active" && (
-                    <span className="px-3 py-1 text-sm rounded bg-green-700 text-white">
-                      Ativa
-                    </span>
-                  )}
-                  {l.state === "inactive" && (
-                    <span className="px-3 py-1 text-sm rounded bg-yellow-600 text-white">
-                      Inativa
-                    </span>
-                  )}
-                  {l.state === "revoked" && (
-                    <span className="px-3 py-1 text-sm rounded bg-red-700 text-white">
-                      Revogada
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4">
-                  <a
-                    href={`http://localhost:3000/${l.documentURL}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-4 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    Download PDF
-                  </a>
-                </td>
-              </tr>
-            ))}
-
-            {paginated.length === 0 && (
+            {paginated.length > 0 ? (
+              paginated.map((l, i) => (
+                <tr key={i} className="border-b border-gray-700">
+                  <td className="px-6 py-4">{l.code}</td>
+                  <td className="px-6 py-4">{l.company}</td>
+                  <td className="px-6 py-4">{formatDate(l.validUntil)}</td>
+                  <td className="px-6 py-4">
+                    {l.state === "active" && (
+                      <span className="px-3 py-1 text-sm rounded bg-green-700 text-white">
+                        Ativa
+                      </span>
+                    )}
+                    {l.state === "expired" && (
+                      <span className="px-3 py-1 text-sm rounded bg-yellow-600 text-white">
+                        Expirada
+                      </span>
+                    )}
+                    {l.state === "revoked" && (
+                      <span className="px-3 py-1 text-sm rounded bg-red-700 text-white">
+                        Revogada
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <a
+                      href={`http://localhost:3000/${l.documentURL}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-4 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Download PDF
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan="5" className="px-6 py-4 text-center text-gray-400">
                   Nenhuma licença encontrada.
@@ -291,7 +294,7 @@ function Licenses() {
         </table>
       </div>
 
-      {/* Navegação da paginação */}
+      {/* Paginação */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-2 mt-6">
           <button

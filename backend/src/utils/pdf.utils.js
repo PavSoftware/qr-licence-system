@@ -12,7 +12,7 @@ const inserQrIntoPdf = async (
   inputPath,
   outputPath,
   qrSource,
-  position = { x: 100, y: 50, width: 200, height: 200 }
+  position = { x: 600, y: 400, width: 500, height: 500 }
 ) => {
   // Lê PDF original
   const existingPdfBytes = fs.readFileSync(inputPath)
@@ -39,10 +39,10 @@ const inserQrIntoPdf = async (
 
   // Desenha QR na posição escolhida
   firstPage.drawImage(qrImage, {
-    x: position.x,
-    y: position.y,
-    width: position.width,
-    height: position.height
+    x: 60,
+    y: 160,
+    width: 255,
+    height: 260
   })
 
   // Salva novo PDF

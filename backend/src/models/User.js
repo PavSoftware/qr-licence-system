@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ['admin'],
+            enum: ['super-admin','admin'],
             default: 'admin'
         },
         isActive:{
@@ -32,6 +32,14 @@ const UserSchema = new mongoose.Schema(
         lastLogin: {
             type: Date
         },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        },
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }
     },
     {timestamps: true}
 );

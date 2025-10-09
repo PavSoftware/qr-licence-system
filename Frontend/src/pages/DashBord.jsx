@@ -33,7 +33,15 @@ function DashBord() {
       .catch((error) => console.error("Error fetching stats:", error));
   }, [token]);
 
-  if (!stats) return <p>Carregando estatísticas...</p>;
+  if (!stats) {
+    //spinner bonito com Tailwind
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#0f111a] text-white">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-300 text-sm">Carregando sessão...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-[#0f111a]">
@@ -55,13 +63,15 @@ function DashBord() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <StatCard title="Active" value={stats.active} />
-            <StatCard title="Expired" value={stats.inactive} />
+            <StatCard title="Expired" value={stats.expired} />
             <StatCard title="Revoked" value={stats.revoked} />
           </div>
         </div>
 
         <h2 className="text-xl font-bold mb-4">Licenças Recentes</h2>
-        <LicensesTable licenses={licenses.slice(0, 5)} state={stats} />
+        {licenses  && (
+          <LicensesTable licenses={licenses.slice(0, 5)} state={stats} />
+        )}
       </main>
     </div>
   );

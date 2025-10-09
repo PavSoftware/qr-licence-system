@@ -9,7 +9,7 @@ function Sidebar() {
     location.pathname === path ? "bg-gray-700" : "hover:bg-gray-700";
 
   return (
-    <aside className="bg-[#1f2937] text-gray-200 w-64 min-h-screen flex flex-col p-6">
+    <aside className="bg-[#1f2937] text-gray-200 w-64 min-h-screen flex flex-col p-6 relative">
       <h1 className="text-xl font-bold mb-8"><a href="/profile">License Manager</a></h1>
 
       <nav className="flex flex-col gap-2">

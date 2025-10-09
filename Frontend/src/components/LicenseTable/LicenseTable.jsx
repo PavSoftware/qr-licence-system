@@ -1,6 +1,6 @@
 import React from 'react'
 
-function LicenseTable({  licenses, state }) {
+function LicenseTable({  licenses }) {
 
     const formatDate = (dateStr) => {
     if (!dateStr) return "-";
@@ -29,16 +29,16 @@ function LicenseTable({  licenses, state }) {
                     <td className="py-3">{l.company}</td>
                     <td className="py-3">{formatDate(l.validUntil)}</td>
                     <td className="py-3">
-                        { state && <span className={`px-3 py-1 rounded-lg text-sm font-semibold cursor-pointer ${
-                            state.active !== 0
-                            ? "bg-green-600/30 text-green-400" : state.inactive >= 0
+                   <span className={`px-3 py-1 rounded-lg text-sm font-semibold cursor-pointer ${
+                            l.state === 'active' 
+                            ? "bg-green-600/30 text-green-400" : l.state === 'expired'
                             ? "bg-yellow-600/30 text-yellow-400" : "bg-red-600/30 text-red-400"
                         }`}>
-                            { state.active !== 0
-                            ? "Active" : state.inactive >= 0
+                            { l.state === 'active'
+                            ? "Active" : l.state === 'expired'
                             ? "Inactive" : "Expired"
                             }
-                        </span> }
+                        </span>
                     </td>
                  </tr>
             ))}

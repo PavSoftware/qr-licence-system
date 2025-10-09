@@ -1,5 +1,6 @@
 import User from '../models/User.js'
 
+
 const loginUser = async (email, password) => {
     const user = await User.findOne({ email })
 
@@ -17,5 +18,7 @@ const loginUser = async (email, password) => {
 
     return user
 }
+
+
 
 export default { loginUser }
