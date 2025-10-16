@@ -8,7 +8,7 @@ import LicensesTable from "../components/LicenseTable/LicenseTable";
 import { UserCircle } from "lucide-react";
 
 function DashBord() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [stats, setStats] = useState(null);
   const [licenses, setLicenses] = useState([]);
   const navigate = useNavigate();
@@ -42,7 +42,8 @@ function DashBord() {
       </div>
     );
   }
-
+if (user.role == 'admin') {
+  
   return (
     <div className="flex min-h-screen bg-[#0f111a]">
       {/* Main Content */}
@@ -75,6 +76,9 @@ function DashBord() {
       </main>
     </div>
   );
+}else {
+  return navigate('/super-admin')
+}
 }
 
 export default DashBord;

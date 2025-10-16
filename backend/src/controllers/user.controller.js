@@ -58,14 +58,14 @@ const listUsers = async (req,res) => {
 
 const deleteUser = async (req,res) => {
     try {
-       const { id } = req.body
-        const user = await userService.findOneUser(id)
+       const { id } = req.params
+        const user = await userService.findAdmins(id)
 
         if (!user) return res.status(404).send({ message: 'usuario nao encontrado'})
 
         if (user.role === 'super-admin') return res.status(403).send({ message: 'nao e possivel apagar super-admin'})
 
-        await userService.deleteUser( id )
+        await userService.deleteUserService( id )
 
         return res.status(200).send({ message: 'usuario apagado com sucesso' })
     } catch (error) {
@@ -113,7 +113,27 @@ const UpDateSuperAdmin = async (req, res) => {
   }
 };
 
-export default { register, listUsers, deleteUser, UpDateSuperAdmin}
+const upDateAdmins = async (req,res) => {
+   try {
+     const { id } = req.params
+     const {  isActive  } = req.body
+
+    const user = userService.findOneUserById (  id  )
+
+    if(!user) return res.status(400).send({ message: 'user not found' })
+
+      await userService.upDateAdminsService ({
+         id,
+         isActive
+      })
+
+      return res.status(200).send({message: 'usuario actualizado com sucesso'})
+   } catch (error) {
+     return res.status(500).send({message: 'nao foi possivel actualizar o admin'})
+   }
+}
+
+export default { register, listUsers, deleteUser, UpDateSuperAdmin, upDateAdmins}
 
 
 

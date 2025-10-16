@@ -37,7 +37,7 @@ function SuperAdmin() {
     fetchAdmins();
   }, [token]);
 
-  // 🌀 Tela de carregamento enquanto busca admins
+  //  Tela de carregamento enquanto busca admins
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#0f111a] text-white">
@@ -84,7 +84,6 @@ function SuperAdmin() {
                 <th className="py-3">Email</th>
                 <th className="py-3">Último Login</th>
                 <th className="py-3">Status</th>
-                <th className="py-3 text-center">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -97,19 +96,15 @@ function SuperAdmin() {
                     <td>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          admin.status === "Ativo"
+                          admin.isActive
                             ? "bg-green-700/30 text-green-400"
                             : "bg-yellow-700/30 text-yellow-400"
                         }`}
                       >
-                        {admin.status || "Ativo"}
+                        {admin.isActive ? 'Activo':'Inactivo'}
                       </span>
                     </td>
-                    <td className="text-center">
-                      <button className="px-4 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold">
-                        Remover
-                      </button>
-                    </td>
+                    
                   </tr>
                 ))
               ) : (

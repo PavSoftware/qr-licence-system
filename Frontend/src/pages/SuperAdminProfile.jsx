@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { BarChart3, Users, FileText, LogOut, Home, Edit3, Loader2 } from "lucide-react";
 
 function SuperAdminDashboard() {
-  const { user, logout } = useAuth();
+  const {token, user, logout } = useAuth();
   const navigate = useNavigate();
+  const [license,setLicense] = useState([])
+  const [users,setUsers] = useState([])
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     ativos: 0,
@@ -15,18 +17,62 @@ function SuperAdminDashboard() {
     ativas: 0,
   });
 
+    useEffect(() => {
+      if (!token) return;
+      fetch("http://localhost:3000/license/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => setLicense(data))
+        .catch((err) => console.error("Error fetching licenses:", err));
+    }, [token]);
+  
+    useEffect(() => {
+      if (!token) return;
+      fetch("http://localhost:3000/user/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => setUsers(data))
+        .catch((error) => console.error("Error fetching stats:", error));
+
+    }, [token]);
+    
+    const tot = users.filter((u)=>{
+          if(u.isActive) {
+            return u
+          }
+          return 0
+        }) 
+
+        const totInactive = users.filter((u)=>{
+          if(!u.isActive) {
+            return u
+          }
+          return 0
+        }) 
+
+        const totLicense = license.filter((l) => {
+           if (l.state == 'active') {
+            return l
+           }
+           return 0
+        })
+
+
+  
   useEffect(() => {
-    // Simula uma chamada à API (1.5 s de delay)
     setTimeout(() => {
       setStats({
-        ativos: 5,
-        licencas: 42,
-        ativas: 37,
-        inativos: 2,
+        ativos: tot.length,
+        licencas: license.length,
+        ativas: totLicense.length,
+        inativos: totInactive.length,
       });
       setLoading(false);
+      
     }, 1500);
-  }, []);
+  }, );
 
   return (
     <div className="min-h-screen bg-[#0f111a] text-white p-8">

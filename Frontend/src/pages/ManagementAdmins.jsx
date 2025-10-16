@@ -21,7 +21,7 @@ function ManageAdmins() {
       });
       const data = await res.json();
 
-      // ⏱️ Delay suave de 1.5s antes de mostrar os dados
+      // ⏱Delay suave de 1.5s antes de mostrar os dados
       setTimeout(() => {
         setAdmins(data);
         setLoading(false);
@@ -69,7 +69,7 @@ function ManageAdmins() {
   // Ativar / Desativar admin
   const toggleAtivo = async (id, currentState) => {
     try {
-      const res = await fetch(`http://localhost:3000/user/${id}`, {
+      const res = await fetch(`http://localhost:3000/user/update/admin/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -11,7 +11,7 @@ export const SuperAdminRoute = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
 
-  return user.role === "super-admin"
+  return user.role == "super-admin"
     ? <Outlet />
     : <Navigate to="/dashboard" replace />;
 };

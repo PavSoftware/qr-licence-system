@@ -2,13 +2,13 @@ import User from "../models/User.js";
 
 const seedAdmin = async () => {
     try {
-        const adminExists = await User.findOne({ role: 'admin'})
+        const adminSuper = await User.findOne({ role: 'super-admin' })
 
-        if (!adminExists) {
+        if ( !adminSuper ) {
             const admin = new User({
                 name: 'Super Admin',
-                email: 'admin@gmail.com',
-                password: '11235813',
+                email: 'superadmin@gmail.com',
+                password: 'superadmin1234',
                 role: 'super-admin'
             })
 
@@ -16,7 +16,7 @@ const seedAdmin = async () => {
 
             console.log('usuario criado com sucesso');
         }else { 
-            console.log('admin ja existe, seed ignorado');
+            console.log('super admin ja existe, seed ignorado');
             
         }
     } catch (error) {

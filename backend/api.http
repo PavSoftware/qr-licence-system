@@ -33,7 +33,7 @@ Content-Type: application/json
 
 ### Listar usuários (precisa TOKEN se for admin)
 GET {{baseUrl}}/user/list
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc1OTkyMTk2NywiZXhwIjoxNzYwNTI2NzY3fQ.ebPD_4AcPDlZDW7yRQdEJx9f0-WXyMENJZ5Ib5iqZ7g
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc2MDYxMTg5MiwiZXhwIjoxNzYxMjE2NjkyfQ.bCTQerA1k5A91jHiKn-uUtNgh1ec3BQdcZ6cscveBzM
 
 
 ### ========================
@@ -92,21 +92,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5ZjMzN
 
 
 ### Buscar licença por ID
-GET {{baseUrl}}/license/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2MxNmU2OWY1NjUyYjlmYzkyZjNjZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODIwNTY3MCwiZXhwIjoxNzU4ODEwNDcwfQ.KRlQolocMaiUzM_DG_D4zzZzhgtvaWn-edtZnFBSxrw
-
+GET {{baseUrl}}/license/list
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc2MDYxMTg5MiwiZXhwIjoxNzYxMjE2NjkyfQ.bCTQerA1k5A91jHiKn-uUtNgh1ec3BQdcZ6cscveBzM
 ### Atualizar licença
-PUT {{baseUrl}}/license/{{id}}
+PATCH  {{baseUrl}}/user/update/admin/68e01081693faeacb3418391
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc2MDYxMTg5MiwiZXhwIjoxNzYxMjE2NjkyfQ.bCTQerA1k5A91jHiKn-uUtNgh1ec3BQdcZ6cscveBzM
 
 {
-  "state": "inactive"
+  "isActive": false
 }
 
 ### Deletar licença
-DELETE {{baseUrl}}/license/{{id}}
-Authorization: Bearer {{token}}
+DELETE {{baseUrl}}/user/delete/68de9f3377546d6ddc291670
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZGU5YzhiMzhkNDEwZTBiMjVhMjcwOSIsInJvbGUiOiJzdXBlci1hZG1pbiIsImlhdCI6MTc2MDYxMTg5MiwiZXhwIjoxNzYxMjE2NjkyfQ.bCTQerA1k5A91jHiKn-uUtNgh1ec3BQdcZ6cscveBzM
 
 
 ### ========================

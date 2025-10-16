@@ -11,6 +11,7 @@ router.get( '/list',authMiddleware,isSuperAdmin, userController.listUsers )
 
 router.patch('/update/:id', authMiddleware, isSuperAdmin, userController.UpDateSuperAdmin)
 
+router.patch('/update/admin/:id', authMiddleware, isSuperAdmin, userController.upDateAdmins)
 router.delete('/delete/:id', authMiddleware, isSuperAdmin, userController.deleteUser)
 // router.post('/login', userController.loginAdmin)
 

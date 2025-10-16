@@ -12,7 +12,9 @@ const createUser = (data) => User.create(data);
 // lista admins
 const findAdmins = () => User.find({ role: 'admin' }).select('-password');
 
-
+const upDateAdminsService = async ({id,isActive}) => User.updateOne(
+  {_id: id},{isActive: isActive}, {new: true}
+)
 
 const UpDateSuperAdmin = async ({ id, name, email, password }) => {
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,13 +28,14 @@ const UpDateSuperAdmin = async ({ id, name, email, password }) => {
 
 
 // deleta user
-const deleteUser = (id) => User.deleteOne({ _id: id });
+const deleteUserService = (id) => User.deleteOne({ _id: id });
 
 export default { 
   createUser, 
   findOneUserByEmail, 
   findOneUserById, 
   findAdmins, 
-  deleteUser,
-  UpDateSuperAdmin 
+  deleteUserService,
+  UpDateSuperAdmin,
+  upDateAdminsService  
 };
