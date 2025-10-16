@@ -9,16 +9,19 @@ const login = async (req,res) => {
 
         const token = generateToken(user)
 
-        res.status(200).send({
+       if (user.isActive) {
+         res.status(200).send({
             message: 'Login realizado com sucesso',
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                isActive: user.isActive
             },
             token
         })
+       }else return res.status(200).send({message: 'Usuario nao se encontra activo', user: {isActive: user.isActive}})
     } catch (error) {
         res.status(401).send({ message: error.message })
     }

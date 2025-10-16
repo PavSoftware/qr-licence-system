@@ -173,7 +173,7 @@ const validate = async (req,res)=> {
         //     })
         // }
 
-        //--- Montar o Html mais se o dev que baixar o projecto quiser vc pode gerar isso no front poe em comentario e trabalha
+        //--- Montar o Html mais se o dev que baixar o projecto quiser vc pode gerar isso no back pois eu ja gerei no front remove  o comentario e trabalha
         //Escolhe qual fonte da imagem QR usar: 
         //preferimos base64 em license.qrcode, se nao existir usa qrCodeURL publico
         // const qrImg = license.qrCode ? license.qrCode : (license.documentURL ? `${process.env.BASE_URL.replace(/\/$/, '')}/${license.documentURL.replace(/^\/+/, '')}` : '')

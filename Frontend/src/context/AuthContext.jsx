@@ -43,20 +43,28 @@ const updateUser = (updatedUser) => {
 
       if (!res.ok) throw new Error(data.message || "Erro no login");
 
-      const t = data.token;
+      
       const u = data.user;
 
-      setToken(t);
-      setUser(u);
+        if (u.isActive) {
+          const t = data.token;
+          setToken(t);
+          setUser(u);
 
-      localStorage.setItem("token", t);
-      localStorage.setItem("user", JSON.stringify(u));
+          localStorage.setItem("token", t);
+          localStorage.setItem("user", JSON.stringify(u));
+          
+          if (u.role === "super-admin") {
+            navigate("/super-admin");
+          } else {
+            navigate("/dashboard");
+          }
+        }else{
+          alert('Usuario nao se encontra activo')
+          return navigate('/login')
+        }
 
-      if (u.role === "super-admin") {
-        navigate("/super-admin");
-      } else {
-        navigate("/dashboard");
-      }
+        
     } catch (err) {
       console.error("Erro no login:", err.message);
       alert("Falha no login: " + err.message);
