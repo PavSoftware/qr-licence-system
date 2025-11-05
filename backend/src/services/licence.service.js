@@ -1,125 +1,133 @@
 import licence from "../models/licence.js";
-import { generateQRCodeWithText } from '../utils/qrcode.utils.js';
+import { generateQRCodeWithText } from "../utils/qrcode.utils.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { inserQrIntoPdf } from '../utils/pdf.utils.js'
-import fs from "fs"
-import { log } from "console";
+import { inserQrIntoPdf } from "../utils/pdf.utils.js";
+import fs from "fs";
 
-
-//criar uma licenca nova
+// 🔹 Criar uma licença nova
 const createLicense = async (data, filePath, userId, originalName) => {
-  if (!filePath) throw new Error("Caminho do arquivo não definido")
+  if (!filePath) throw new Error("Caminho do arquivo não definido");
 
   const existingLicense = await licence.findOne({
     $or: [{ documentURL: filePath }, { originalName }],
-    state: 'active',
-    validUntil: { $gte: new Date() }
-  })
+    state: "active",
+    validUntil: { $gte: new Date() },
+  });
 
-  if (existingLicense) throw new Error('Ja existe uma licenca activa para este documento')
+  if (existingLicense) throw new Error("Já existe uma licença ativa para este documento");
 
-  const licenseCode = "L-" + Date.now()
-  const validationURL = `${process.env.Base_URL}/license/validate/${licenseCode}`
+  const licenseCode = "L-" + Date.now();
+  const validationURL = `${process.env.Base_URL}/license/validate/${licenseCode}`;
 
   // 🔹 Gera QR em base64
-  const qrBase64 = await generateQRCodeWithText(validationURL, licenseCode)
+  const qrBase64 = await generateQRCodeWithText(validationURL, licenseCode);
 
-  const inputPath = path.join(process.cwd(), filePath)
-  const processDir = path.join(process.cwd(), "uploads/licenses/processed")
-  if (!fs.existsSync(processDir)) fs.mkdirSync(processDir, { recursive: true })
+  const inputPath = path.join(process.cwd(), filePath);
+  const processDir = path.join(process.cwd(), "uploads/licenses/processed");
+  if (!fs.existsSync(processDir)) fs.mkdirSync(processDir, { recursive: true });
 
-  const outputPath = path.join(processDir, `${licenseCode}.pdf`)
-  const qrConfig = data.qrConfig || { x: 450, y: 50, width: 120, height: 120 }
+  const outputPath = path.join(processDir, `${licenseCode}.pdf`);
+  const qrConfig = data.qrConfig || { x: 450, y: 50, width: 120, height: 120 };
 
-  // 🔹 Injeta QR
-  await inserQrIntoPdf(inputPath, outputPath, qrBase64, qrConfig)
+  // 🔹 Injeta QR no PDF
+  await inserQrIntoPdf(inputPath, outputPath, qrBase64, qrConfig);
 
-  return await licence.create({
-    ...data,
-    code: licenseCode,
-    qrCode: qrBase64, // opcional
-    documentOriginal: filePath,
-    originalName,
-    documentURL: `uploads/licenses/processed/${licenseCode}.pdf`,
-    createdBy: userId
-  })
-}
+  // 🔹 Normaliza o estado (remove espaços, converte para minúsculo)
+  const normalizedState = (data.state || "active").trim().toLowerCase();
+
+    return await licence.create({
+        ...data,
+        state: (data.state && data.state.trim().toLowerCase()) === 'inactive' 
+            ? 'inactive' 
+            : 'active', // 🧱 força "active" se vier vazio, null, undefined, etc
+        code: licenseCode,
+        qrCode: qrBase64,
+        documentOriginal: filePath,
+        originalName,
+        documentURL: `uploads/licenses/processed/${licenseCode}.pdf`,
+        createdBy: userId
+        });
 
 
+};
 
-//buscar licenca por id
+// 🔹 Buscar licença por ID
 const findLicenseById = async (id) => {
-    return await licence.findById(id)
-}
+  return await licence.findById(id);
+};
 
-
-//buscar all licencas (escalavel para caso se precise fazer buscas com filtros)
+// 🔹 Buscar todas as licenças
 const findAllLicenses = async (filter) => {
-    return await licence.find(filter).populate('createdBy', 'name email').sort({ createdAt: -1 })
-} 
+  return await licence
+    .find(filter)
+    .populate("createdBy", "name email")
+    .sort({ createdAt: -1 });
+};
 
-
-//buscar licenca por codigo unico
+// 🔹 Buscar licença por código
 const findLicenseBycode = async (code) => {
-    return await licence.findOne({ code })
-}
+  return await licence.findOne({ code });
+};
 
-
-//actualizar licenca
+// 🔹 Atualizar licença
 const updateLicense = async (id, data) => {
-    return await licence.findByIdAndUpdate(id, data, { new: true})
-}
+  if (data.state) data.state = data.state.trim().toLowerCase();
+  return await licence.findByIdAndUpdate(id, data, { new: true });
+};
 
-
-//deletar licenca
+// 🔹 Deletar licença
 const deleteLicense = async (id) => {
-    return await licence.findByIdAndDelete(id)
-}
+  return await licence.findByIdAndDelete(id);
+};
 
-
-//Diferencial dentro do service a gente vai validar a licenca pelo cpodigo usado para rota publica via QR
+// 🔹 Validar licença (usada pela rota pública /license/validate/:code)
 const validateLicense = async (code) => {
-    const license = await licence.findOne({ code })
+  const license = await licence.findOne({ code });
 
-    if (!license) return  { valid: false, message: 'Licenca nao encontrada'}
+  if (!license) return { valid: false, message: "Licença não encontrada" };
 
-    if (license.state !== 'active') {
-         return  {valid: false, message: 'licenca nao activa'}
-    }
-       
-    if (license.validUntil < new Date()) return { valid: false, message: 'Licenca expirada'}
+  // Normaliza o valor antes de comparar
+  const currentState = license.state?.trim().toLowerCase();
 
-    return {valid: true, data: license}
-}
+  if (currentState !== "active") {
+    return { valid: false, message: "Licença não ativa" };
+  }
 
-//estatisticas das licencas
+  if (license.validUntil < new Date()) {
+    return { valid: false, message: "Licença expirada" };
+  }
+
+  return { valid: true, data: license };
+};
+
+// 🔹 Estatísticas das licenças
 const getLicenseStates = async () => {
-    const total = await licence.countDocuments()
-    const active = await licence.countDocuments({ state: "active" })
-    const inactive = await licence.countDocuments({ state: "inactive "})
-    const revoked = await licence.countDocuments({ state: 'revoked'})
-    const expired = await licence.countDocuments({ validUntil: {$lt: new Date() } })
+  const total = await licence.countDocuments();
+  const active = await licence.countDocuments({ state: "active" });
+  const inactive = await licence.countDocuments({ state: "inactive" });
+  const revoked = await licence.countDocuments({ state: "revoked" });
+  const expired = await licence.countDocuments({ validUntil: { $lt: new Date() } });
 
-    const latest = await licence.find().sort({ createdAt: -1 }).limit(5)
+  const latest = await licence.find().sort({ createdAt: -1 }).limit(5);
 
-    return {
-        total,
-        active,
-        inactive,
-        revoked,
-        expired,
-        latest
-    }
-}
+  return {
+    total,
+    active,
+    inactive,
+    revoked,
+    expired,
+    latest,
+  };
+};
 
 export {
-    createLicense,
-    findAllLicenses,
-    findLicenseById,
-    findLicenseBycode,
-    updateLicense,
-    deleteLicense,
-    validateLicense,
-    getLicenseStates
-}
+  createLicense,
+  findAllLicenses,
+  findLicenseById,
+  findLicenseBycode,
+  updateLicense,
+  deleteLicense,
+  validateLicense,
+  getLicenseStates,
+};

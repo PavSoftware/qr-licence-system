@@ -41,7 +41,9 @@ const licenseSchema = new mongoose.Schema(
       type: String,
       enum: ["active", "inactive", "revoked"],
       default: "active",
+      set: v => (v ? v.trim().toLowerCase() : "active") //normaliza automático
     },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // admin que criou
